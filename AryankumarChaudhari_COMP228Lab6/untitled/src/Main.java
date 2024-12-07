@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class Main {
@@ -13,24 +15,16 @@ public class Main {
         transactions.add(new Transaction(account, true, 500.00));  // Deposit
         transactions.add(new Transaction(account, false, 300.00)); // Withdraw
 
-        // Create threads
-        Thread thread1 = new Thread(transactions.get(0), "Thread 1");
-        Thread thread2 = new Thread(transactions.get(1), "Thread 2");
-        Thread thread3 = new Thread(transactions.get(2), "Thread 3");
 
-        // Starting threads
-        thread1.start();
-        thread2.start();
-        thread3.start();
-
-        // waiting for threads to complete
-        try {
-            thread1.join();
-            thread2.join();
-            thread3.join();
-        } catch (InterruptedException e) {
-            System.out.println("A thread was interrupted");
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        // Execute each transaction
+        for (Transaction transaction : transactions) {
+            executor.execute(transaction);
         }
+
+        // Shutdown the executor
+        executor.shutdown();
+
 
 
         // Printing final balance
